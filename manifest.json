@@ -1,0 +1,8 @@
+{
+  "name": "Lucy Care",
+  "short_name": "Lucy",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#14110e",
+  "theme_color": "#14110e"
+}
