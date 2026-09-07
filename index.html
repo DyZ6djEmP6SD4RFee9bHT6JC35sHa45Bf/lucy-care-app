@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#14110e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Lucy Care</title>
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <main id="lock">
+    <img class="avatar" src="img/lucy.jpg" alt="Lucy" width="112" height="112">
+    <h1 id="lock-title">Lucy Care</h1>
+    <p class="muted" id="lock-help"></p>
+    <label for="lock-pw">Palavra-passe deste telemóvel</label>
+    <input id="lock-pw" type="password" autocomplete="off">
+    <p class="muted" id="lock-err"></p>
+    <button class="primary" id="lock-btn" type="button">Entrar</button>
+    <p class="small">A Lucy é forte. Qualidade de vida — não substitui o veterinário.</p>
+  </main>
+  <div id="app" class="hidden">
+    <header class="app">
+      <img class="avatar" src="img/lucy.jpg" alt="Lucy" width="52" height="52">
+      <div class="titles">
+        <h1>Lucy Care</h1>
+        <div class="who" id="hoje-who"></div>
+      </div>
+    </header>
+    <section id="hoje">
+      <div class="alert hidden" id="hoje-alerts"></div>
+      <div class="okbox hidden" id="hoje-saved">Check-in guardado neste telemóvel.</div>
+      <div class="card" id="hoje-learn">
+        <h2>O que a app viu</h2>
+        <p class="muted" id="learn-mode"></p>
+        <div id="learn-lines"></div>
+      </div>
+      <div class="card">
+        <h2>Hoje <span class="badge" id="hoje-date"></span></h2>
+        <p class="muted">Toca nas opções. Grava sozinho.</p>
+        <label>Comeu?</label><div id="f-appetite"></div>
+        <label>Água</label><div id="f-water"></div>
+        <label>Energia / brincar</label><div id="f-energy"></div>
+        <label>Dor ou rigidez</label><div id="f-pain"></div>
+        <label>Caixa</label><div id="f-litter"></div>
+        <label>Vómito ou diarreia</label><div id="f-vomit"></div>
+        <label>Mimo</label><div id="f-mimo"></div>
+      </div>
+      <div class="card">
+        <h2>Pele hoje</h2>
+        <label>Rasgão novo?</label><div id="f-tear"></div>
+        <div id="tear-extra" class="hidden">
+          <label>Onde?</label><input id="tear-where" type="text">
+          <label>Tamanho</label><div id="f-size"></div>
+        </div>
+        <label>Penso / fato</label><div id="f-dress"></div>
+        <label>Unhas</label><div id="f-nails"></div>
+        <label>Uma frase</label><textarea id="hoje-note"></textarea>
+        <button class="primary" id="btn-save-hoje" type="button">Guardar nota</button>
+      </div>
+    </section>
+    <section id="pele" class="hidden">
+      <div class="alert">25 Ago 2026 AniCura: 4 cm + 7 cm. Se luta, PARAR. Alta tutor 7 Set. João XXI 218 489 230.</div>
+      <div class="card">
+        <h2>Ferida na lista</h2>
+        <label>Sítio</label><input id="wound-where" type="text">
+        <label>Nota</label><input id="wound-note" type="text">
+        <p class="muted" id="wound-err"></p>
+        <button class="primary" id="btn-add-wound" type="button">Acrescentar</button>
+        <ul class="list" id="wound-list"></ul>
+      </div>
+    </section>
+    <section id="estudos" class="hidden">
+      <div class="alert">Para o veterinário — não é receita. A prateleira actualiza-se sozinha ao abrir (com rede). Caderno e password ficam neste telemóvel.</div>
+      <div class="card">
+        <h2>Lista curada</h2>
+        <div id="estudo-list"></div>
+      </div>
+    </section>
+    <section id="perfil" class="hidden">
+      <div class="okbox hidden" id="perfil-saved">Perfil guardado.</div>
+      <div class="card">
+        <h2>Lucy</h2>
+        <label>Nome</label><input id="p-name" type="text">
+        <label>Idade</label><input id="p-age" type="text">
+        <label>Peso (kg)</label><input id="p-weight" type="text">
+        <label>Diagnóstico</label><input id="p-diag" type="text">
+        <label>Medicação</label><textarea id="p-meds"></textarea>
+        <label>Veterinário</label><input id="p-vet" type="text">
+        <label>Alergias</label><input id="p-all" type="text">
+        <label>O que ela gosta</label><textarea id="p-likes"></textarea>
+        <button class="primary" id="btn-save-perfil" type="button">Guardar perfil</button>
+      </div>
+      <div class="card">
+        <h2>Pacote campo</h2>
+        <button class="ghost" id="btn-vet" type="button">Relatório para o vet</button>
+        <button class="ghost" id="btn-export" type="button">Exportar JSON</button>
+        <textarea id="json-box" class="hidden"></textarea>
+        <button class="ghost" id="btn-import" type="button">Importar JSON</button>
+        <p class="muted" id="import-err"></p>
+      </div>
+      <button class="danger" id="btn-lock" type="button">Bloquear</button>
+    </section>
+    <nav class="tab">
+      <button type="button" class="on" data-tab="hoje">Hoje</button>
+      <button type="button" data-tab="pele">Pele</button>
+      <button type="button" data-tab="estudos">Estudos</button>
+      <button type="button" data-tab="perfil">Perfil</button>
+    </nav>
+  </div>
+  <script src="js/auth.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/learn.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
