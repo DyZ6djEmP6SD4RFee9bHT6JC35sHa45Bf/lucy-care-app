@@ -1,2 +1,3 @@
 # lucy-care-app
-PWA Lucy Care — check-in local com password. Prateleira de estudos pública à parte.
+PWA Lucy Care — check-in, casa lucy-casa, anexos e prateleira.
+Publicação: Vercel project lucy-qol-docs (Git ligado 2026-09-08).
