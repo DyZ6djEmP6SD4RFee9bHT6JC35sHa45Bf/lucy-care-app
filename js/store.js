@@ -1,34 +1,126 @@
 const Store = (() => {
   const KEY = "lc.data.v1";
   const SHELF_URL = "https://raw.githubusercontent.com/DyZ6djEmP6SD4RFee9bHT6JC35sHa45Bf/lucy-care-shelf/main/data/estudos.json";
+  const CENTRAL_REV = 5;
+  const CENTRAL = {
+    profile: {
+      name: "Lucy",
+      age: "~2 anos e 6 meses (nasc. 01/04/2024 João XXI). Scottish Fold, dobra só na ponta da orelha.",
+      weightKg: "",
+      diagnosis: "Astenia cutânea / EDS clínico (VetOlaias 17/12/2024, sem teste genético). Hérnia umbilical. Costela fracturada em cria, calo irregular, alto na barriga. História aos 6 meses: sarna à chegada → tinha → piodermite grave.",
+      meds: "Gabapentina diária 25 mg (comp. 100 mg partidos em 4). 50 mg se agitada/dor; raro 75–100 — escala da médica. Doses restantes: o vet. Alta AniCura tutor 07/09/2026.",
+      vet: "João XXI 218 489 230. AniCura 213 156 207 / 927 427 505.",
+      allergies: "",
+      likes: "Liô; colar-flor mole; caixa com penas. Pijama elástico macio (poliéster/elastano) corpo/pernas/pescoço. Cone acolchoado no pescoço e na borda. Não gosta de colo; usa avental canguru. Feridas camufladas em nós/cordões de pelo com crosta por baixo."
+    },
+    checks: [
+      {
+        date: "2026-09-07",
+        mimo: true,
+        note: "Ela hoje está bem. Não me parece que tenha dores, mas se tocar nas patas onde ainda estão as feridas ela reage mal. As feridas já estão cicatrizadas. A da pata dianteira esquerda está mais avançada, já não tem crosta. A ferida da pata traseira esquerda ainda tem uma grande crosta. Apareceu mais uma pequena ferida na pata traseira direita. Só reparei ontem.",
+        pain: 2,
+        water: true,
+        energy: 4,
+        appetite: "bem"
+      },
+      {
+        date: "2026-09-08",
+        mimo: true,
+        note: "Ela hoje está bem. Não me parece que tenha dores, mas se wu lhe tocar nas patas onde ainda estão as feridas ela reage muito mal. As feridas já estão quase cicatrizadas. A da pata dianteira esquerda está mais avançada, já não tem crosta. A ferida da pata traseira esquerda ainda tem uma grande crosta e pequenas crostas em algumas partes. Apareceu mais uma pequena ferida na pata traseira direita. Só reparei ontem.",
+        pain: 2,
+        vomit: false,
+        water: true,
+        energy: 3,
+        litter: "normal",
+        newTear: false,
+        appetite: "normal",
+        tearSize: "",
+        tearWhere: "",
+        dressingOn: false,
+        nailsTrimmed: false
+      }
+    ],
+    wounds: [
+      {
+        id: "w1788814068417",
+        where: "Pata traseira direita — pequena ferida nova",
+        opened: "2026-09-07",
+        status: "aberta"
+      },
+      {
+        id: "w-dianteira-esq-2026-08-19",
+        cause: "Brincadeira com o outro gato.",
+        where: "Pata dianteira esquerda",
+        opened: "2026-08-19",
+        sizeCm: "4",
+        status: "a_cicatrizar"
+      },
+      {
+        id: "w-traseira-esq-2026-08-25",
+        cause: "Contenção AniCura: 4 assistentes.",
+        where: "Pata traseira esquerda",
+        opened: "2026-08-25",
+        sizeCm: "7",
+        status: "aberta"
+      }
+    ]
+  };
   function today() {
     return new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Lisbon" });
   }
   function empty() {
     return {
-      profile: { name: "Lucy", age: "", weightKg: "", diagnosis: "", meds: "", vet: "", allergies: "", likes: "" },
-      checks: [], wounds: [], docs: [], research: [], seeded: true, seedRev: 4
+      profile: Object.assign({}, CENTRAL.profile),
+      checks: CENTRAL.checks.slice(),
+      wounds: CENTRAL.wounds.slice(),
+      docs: [],
+      research: [],
+      seeded: true,
+      seedRev: CENTRAL_REV
     };
   }
   function save(data) {
     localStorage.setItem(KEY, JSON.stringify(data));
     return data;
   }
+  function mergeCentral(data) {
+    data.profile = Object.assign({}, data.profile || {}, CENTRAL.profile);
+    const byDate = new Set((data.checks || []).map((c) => c.date));
+    CENTRAL.checks.forEach((c) => {
+      if (!byDate.has(c.date)) data.checks.push(c);
+    });
+    data.checks.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    data.wounds = data.wounds || [];
+    const byId = new Set(data.wounds.map((w) => w.id));
+    CENTRAL.wounds.forEach((w) => {
+      if (!byId.has(w.id)) data.wounds.push(w);
+    });
+    data.wounds = data.wounds.filter((w) => w && w.id !== "w1788817532675");
+    data.seeded = true;
+    data.seedRev = CENTRAL_REV;
+    data.centralAt = "2026-09-20";
+    return data;
+  }
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
-      if (!raw) return empty();
-      const data = JSON.parse(raw);
-      return {
-        profile: Object.assign(empty().profile, data.profile || {}),
-        checks: Array.isArray(data.checks) ? data.checks : [],
-        wounds: Array.isArray(data.wounds) ? data.wounds : [],
-        docs: Array.isArray(data.docs) ? data.docs : [],
-        research: Array.isArray(data.research) ? data.research : [],
+      if (!raw) return save(empty());
+      const parsed = JSON.parse(raw);
+      let data = {
+        profile: Object.assign({}, empty().profile, parsed.profile || {}),
+        checks: Array.isArray(parsed.checks) ? parsed.checks : [],
+        wounds: Array.isArray(parsed.wounds) ? parsed.wounds : [],
+        docs: Array.isArray(parsed.docs) ? parsed.docs : [],
+        research: Array.isArray(parsed.research) ? parsed.research : [],
         seeded: true,
-        seedRev: 4
+        seedRev: parsed.seedRev || 0,
+        centralAt: parsed.centralAt || ""
       };
-    } catch { return empty(); }
+      if ((data.seedRev || 0) < CENTRAL_REV) data = save(mergeCentral(data));
+      return data;
+    } catch {
+      return save(empty());
+    }
   }
   function mergeResearch(list) {
     const data = load();
@@ -45,7 +137,7 @@ const Store = (() => {
     return json;
   }
   return {
-    today, load, save, KEY, pullShelf, mergeResearch,
+    today, load, save, KEY, pullShelf, mergeResearch, CENTRAL_REV,
     upsertCheck(partial) {
       const data = load();
       const date = partial.date || today();
@@ -64,14 +156,15 @@ const Store = (() => {
       const parsed = JSON.parse(text);
       const cur = load();
       if (Array.isArray(parsed.research) && parsed.checks === undefined) return mergeResearch(parsed.research);
-      return save({
+      return save(mergeCentral({
         profile: Object.assign({}, empty().profile, cur.profile, parsed.profile || {}),
         checks: parsed.checks || cur.checks || [],
         wounds: parsed.wounds || cur.wounds || [],
         docs: parsed.docs || cur.docs || [],
         research: parsed.research || cur.research || [],
-        seeded: true, seedRev: 4
-      });
+        seeded: true,
+        seedRev: 0
+      }));
     },
     alerts(data) {
       const out = []; const last = data.checks[0];
